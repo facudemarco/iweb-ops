@@ -1,5 +1,5 @@
 // In development/production via Next.js proxy, use relative path
-const API_URL = typeof window !== 'undefined' ? "/api" : "http://backend:8000/api";
+const API_URL = typeof window !== 'undefined' ? "/api" : "https://ops.iwebtecnology.com/api";
 
 
 export interface HostMetrics {
