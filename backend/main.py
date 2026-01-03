@@ -29,7 +29,7 @@ async def lifespan(app: FastAPI):
     # Shutdown
     alert_daemon.stop()
 
-app = FastAPI(title="iWeb Ops Center API", lifespan=lifespan, prefix="/api")
+app = FastAPI(title="iWeb Ops Center API", lifespan=lifespan)
 
 # CORS
 app.add_middleware(
