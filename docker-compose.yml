@@ -8,15 +8,15 @@ services:
     environment:
       - PORT=8000
     ports:
-      - "8000:8000"
+      - "8026:8000"
 
   frontend:
     build: ./frontend
     container_name: iweb-frontend
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3026:3000"
     environment:
-      - BACKEND_URL=http://backend:8000
+      - BACKEND_URL=http://localhost:8026
     depends_on:
       - backend
