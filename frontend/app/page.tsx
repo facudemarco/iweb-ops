@@ -6,6 +6,7 @@ import ContainerList from "./components/ContainerList";
 import AnalyticsCharts from "./components/AnalyticsCharts";
 import { fetchHostStats, performLogout, HostMetrics } from "./services/api";
 import { LogOut, Activity } from "lucide-react";
+import ThemeToggle from "./components/ThemeToggle";
 
 export default function Home() {
   const [hostMetrics, setHostMetrics] = useState<HostMetrics | null>(null);
@@ -70,6 +71,7 @@ export default function Home() {
                     {hostMetrics ? "OPERATIONAL" : "OFFLINE"}
                 </div>
              </div>
+             <ThemeToggle />
              <div className="h-8 w-px bg-gray-200 dark:bg-slate-700"></div>
              <button 
               onClick={handleLogout}
