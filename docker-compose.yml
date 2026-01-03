@@ -17,6 +17,6 @@ services:
     ports:
       - "3026:3000"
     environment:
-      - BACKEND_URL=http://localhost:8026
+      - BACKEND_URL=http://backend:8000
     depends_on:
       - backend

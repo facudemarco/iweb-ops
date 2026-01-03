@@ -9,6 +9,7 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV BACKEND_URL=http://backend:8000
 
 # Copy standalone build
 COPY --from=builder /app/public ./public
