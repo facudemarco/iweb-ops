@@ -1,0 +1,22 @@
+services:
+  backend:
+    build: ./backend
+    container_name: iweb-backend
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # Required to manage host containers
+    environment:
+      - PORT=8000
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    container_name: iweb-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - BACKEND_URL=http://backend:8000
+    depends_on:
+      - backend
