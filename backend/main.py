@@ -29,13 +29,13 @@ async def lifespan(app: FastAPI):
     # Shutdown
     alert_daemon.stop()
 
-app = FastAPI(title="iWeb Ops Center API", lifespan=lifespan)
+app = FastAPI(title="iWeb Ops Center API", lifespan=lifespan, prefix="/api")
 
 # CORS
 app.add_middleware(
     CORSMiddleware,
     # In production, specify exact origin to allow cookies
-    allow_origins=["http://localhost:3000"], 
+    allow_origins=["http://localhost:3000", "https://ops.iwebtecnology.com"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -43,7 +43,7 @@ app.add_middleware(
 
 # Auth Models & Credentials
 ADMIN_USER = "admin"
-ADMIN_PASS = "iweb2025"
+ADMIN_PASS = "iweb2026"
 COOKIE_NAME = "iweb_session"
 
 class LoginRequest(BaseModel):
