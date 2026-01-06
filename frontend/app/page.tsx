@@ -1,42 +1,39 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { LogOut, Activity } from "lucide-react";
+
+// Components
 import HostStats from "./components/HostStats";
 import ContainerList from "./components/ContainerList";
-import AnalyticsCharts from "./components/AnalyticsCharts";
-import { fetchHostStats, performLogout, HostMetrics } from "./services/api";
-import { LogOut, Activity } from "lucide-react";
 import ThemeToggle from "./components/ThemeToggle";
+import MetricsChart from './components/MetricsChart';
+
+// Services
+import { fetchHostStats, performLogout, HostMetrics } from "./services/api";
 
 export default function Home() {
   const [hostMetrics, setHostMetrics] = useState<HostMetrics | null>(null);
-  const [history, setHistory] = useState<{ time: string, cpu: number, ram: number }[]>([]);
   const router = useRouter();
 
+  // Polling only for the "large numbers" of the current moment (HostStats)
   useEffect(() => {
     const loadHost = async () => {
       try {
         const data = await fetchHostStats();
         setHostMetrics(data);
-        
-        setHistory(prev => {
-          const now = new Date().toLocaleTimeString('en-US', { hour12: false });
-          const newPoint = { time: now, cpu: data.cpu_percent, ram: data.memory.percent };
-          const newHistory = [...prev, newPoint];
-          if (newHistory.length > 30) newHistory.shift(); 
-          return newHistory;
-        });
-
       } catch (e: any) {
         if (e.message === "Unauthorized") {
-           // handled
+           // handled by api interceptor mostly, or redirect here
+           router.push('/login');
         }
       }
     };
+    
     loadHost();
     const interval = setInterval(loadHost, 2000); 
     return () => clearInterval(interval);
-  }, []);
+  }, [router]);
 
   const handleLogout = async () => {
     await performLogout();
@@ -46,14 +43,12 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)] p-4 md:p-6 font-sans text-sm transition-colors duration-300">
       <div className="max-w-[1600px] mx-auto space-y-6">
-        {/* Header */}
+        
+        {/* --- Header --- */}
         <header className="flex justify-between items-center bg-[var(--panel-bg)] border border-[var(--panel-border)] px-6 py-4 rounded-xl shadow-sm">
           <div className="flex items-center gap-4">
-             {/* Logo */}
              <img src="/logo.png" alt="Company Logo" className="h-10 w-auto object-contain" />
-             
              <div className="h-8 w-px bg-gray-200 dark:bg-slate-700 mx-2"></div>
-             
              <div>
                 <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white leading-none">
                   Ops Center
@@ -63,6 +58,7 @@ export default function Home() {
                 </p>
              </div>
           </div>
+          
           <div className="flex items-center gap-6">
              <div className="flex flex-col items-end">
                 <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">System Status</span>
@@ -85,36 +81,42 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Grid Layout */}
+        {/* --- Grid Layout --- */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column (Stats) */}
+            
+            {/* 1. Host Stats (Top cards) */}
             <div className="lg:col-span-3">
                  <HostStats metrics={hostMetrics} />
             </div>
 
-            {/* Main Content Area */}
+            {/* 2. Central Area: Charts and Widgets */}
             <div className="lg:col-span-3 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Charts (2/3 width) */}
+                
+                {/* Main Chart (2/3 width) */}
                 <div className="lg:col-span-2">
-                    <AnalyticsCharts data={history} />
+                    {/* NEW CHART HERE */}
+                    <MetricsChart 
+                        title="Historical Performance (CPU / RAM)" 
+                        type="host" 
+                        mode="resources" 
+                    />
                 </div>
                 
-                {/* Right Panel: Could be logs overview or alerts. For now, let's span container list below */}
+                {/* Right Panel (1/3 width) */}
                 <div className="lg:col-span-1 flex flex-col gap-4">
-                    {/* Placeholder for future widgets or maybe a status summary */}
                     <div className="bg-[var(--panel-bg)] border border-[var(--panel-border)] p-5 rounded-xl shadow-sm flex-1 flex flex-col justify-center items-center text-center">
                         <div className="p-4 bg-blue-50 dark:bg-slate-800 rounded-full mb-3">
                             <Activity className="text-brand-primary" size={24} />
                         </div>
                         <h3 className="font-bold text-gray-900 dark:text-white">System Health</h3>
                         <p className="text-xs text-gray-500 mt-1 max-w-[200px]">
-                            All systems nominal. Host load is stable.
+                            All systems nominal. The chart shows the trend from the last hour.
                         </p>
                     </div>
                 </div>
             </div>
-
-            {/* Bottom: Containers */}
+          
+            {/* 3. Container List */}
             <div className="lg:col-span-3">
                 <ContainerList />
             </div>

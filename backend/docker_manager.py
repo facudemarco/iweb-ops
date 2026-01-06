@@ -95,7 +95,7 @@ def perform_action(container_id, action):
         logging.error(f"Error performing {action} on {container_id}: {e}")
         return False
 
-def update_container_resources(container_id, memory_mb: int = None, cpu_quota: float = None):
+def update_container_resources(container_id, memory_mb: int = 0, cpu_quota: float = 0):
     """
     Hot update container resources.
     memory_mb: Memory limit in MB
